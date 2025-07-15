@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Malla Pedagogía en Educación Básica - PUCV</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 20px;
+    }
+    .semestre {
+      background: #ffffff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 10px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .semestre h2 {
+      text-align: center;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+    .ramo {
+      margin-bottom: 10px;
+      padding: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s, text-decoration 0.3s;
+    }
+    .lila { background-color: #d8b4fe; }
+    .morado { background-color: #7c3aed; color: white; text-decoration: line-through; }
+    .verde { background-color: #b2f2bb; }
+    .turquesa { background-color: #a0f0ed; }
+    .ramo small { display: block; font-size: 12px; opacity: 0.7; }
+  </style>
+</head>
+<body>
+  <h1>Malla Interactiva - Pedagogía en Educación Básica PUCV</h1>
+  <div class="grid" id="malla"></div>
+
+  <script>
+    const ramos = [
+      // Incluye todos los ramos del semestre 1 al 10 con su información completa:
+      // nombre, abrev, creditos, semestre, prerrequisitos (abreviaturas)
+      { semestre: 1, nombre: "Construcción del conocimiento científico", abrev: "CBM121", creditos: 3, prerrequisitos: [] },
+      { semestre: 1, nombre: "Experiencia pedagógica integrada 1", abrev: "EBA159", creditos: 2, prerrequisitos: [] },
+      { semestre: 1, nombre: "Construcción del conocimiento histórico, geográfico y de las ciencias sociales", abrev: "HIS1110", creditos: 3, prerrequisitos: [] },
+      { semestre: 1, nombre: "Construcción del conocimiento lingüístico", abrev: "LCL118", creditos: 3, prerrequisitos: [] },
+      { semestre: 1, nombre: "Estrategias discursivas para acceder al conocimiento disciplinar", abrev: "LCL122", creditos: 2, prerrequisitos: [] },
+      { semestre: 1, nombre: "Construcción del conocimiento matemático", abrev: "MAT1191", creditos: 3, prerrequisitos: [] },
+      { semestre: 1, nombre: "Psicología de la niñez y de la adolescencia", abrev: "PSI196", creditos: 2, prerrequisitos: [] },
+      { semestre: 1, nombre: "Antropología Cristiana", abrev: "IER10-60", creditos: 2, prerrequisitos: [] },
+
+      { semestre: 2, nombre: "Construcción del pensamiento infantil: matematización inicial 1", abrev: "EBA160", creditos: 3, prerrequisitos: [] },
+      { semestre: 2, nombre: "Construcción del pensamiento infantil: habilidades científicas iniciales 1", abrev: "EBA162", creditos: 3, prerrequisitos: [] },
+      { semestre: 2, nombre: "Construcción del pensamiento infantil: habilidades históricas 1", abrev: "EBA165", creditos: 3, prerrequisitos: [] },
+      { semestre: 2, nombre: "Construcción del pensamiento infantil: comprensión y producción de textos 1", abrev: "EBA285", creditos: 3, prerrequisitos: [] },
+      { semestre: 2, nombre: "Neurociencias y educación", abrev: "EBA266", creditos: 3, prerrequisitos: [] },
+      { semestre: 2, nombre: "Experiencia pedagógica integrada 2", abrev: "EBA394", creditos: 2, prerrequisitos: [] },
+      { semestre: 2, nombre: "Experiencia pedagógica integrada 3", abrev: "EBA442", creditos: 2, prerrequisitos: [] },
+
+      // Semestre 3 al 10 completado
+
+      { semestre: 3, nombre: "Construcción del pensamiento infantil: matematización inicial 2", abrev: "EBA220", creditos: 3, prerrequisitos: ["EBA160"] },
+      { semestre: 3, nombre: "Construcción del pensamiento infantil: habilidades científicas 2", abrev: "EBA222", creditos: 2, prerrequisitos: ["EBA162"] },
+      { semestre: 3, nombre: "Construcción del pensamiento infantil: habilidades históricas iniciales 2", abrev: "EBA229", creditos: 2, prerrequisitos: ["EBA165"] },
+      { semestre: 3, nombre: "Construcción del pensamiento infantil: comprensión y producción de textos 2", abrev: "EBA385", creditos: 3, prerrequisitos: [] },
+      { semestre: 3, nombre: "Educar en y para la diversidad", abrev: "EPE1320", creditos: 3, prerrequisitos: [] },
+      { semestre: 3, nombre: "Inglés 1", abrev: "ING9001", creditos: 2, prerrequisitos: [] },
+      { semestre: 3, nombre: "Práctica inicial docente", abrev: "PRA101-385", creditos: 4, prerrequisitos: ["PSI196"] },
+      { semestre: 3, nombre: "Taller psicología del aprendizaje", abrev: "PSI311", creditos: 2, prerrequisitos: [] },
+
+      { semestre: 4, nombre: "Construcción del pensamiento infantil: literacidad inicial 1", abrev: "EBA166", creditos: 3, prerrequisitos: [] },
+      { semestre: 4, nombre: "Construcción del pensamiento infantil: especialidad y medición", abrev: "EBA274", creditos: 3, prerrequisitos: [] },
+      { semestre: 4, nombre: "Experiencia pedagógica integrada 5", abrev: "EBA276", creditos: 2, prerrequisitos: [] },
+      { semestre: 4, nombre: "Construcción del pensamiento infantil: indagación científica 1", abrev: "EBA279", creditos: 2, prerrequisitos: [] },
+      { semestre: 4, nombre: "Construcción del pensamiento infantil: habilidades geográficas iniciales", abrev: "EBA282", creditos: 2, prerrequisitos: [] },
+      { semestre: 4, nombre: "Experiencia pedagógica integrada 4", abrev: "EBA287", creditos: 2, prerrequisitos: [] },
+      { semestre: 4, nombre: "Fundamentos filosóficos y sociales de la educación", abrev: "EPE1118", creditos: 3, prerrequisitos: ["PRA101-385"] },
+      { semestre: 4, nombre: "Psicología social aplicada en la escuela y su comunidad", abrev: "PSI275", creditos: 3, prerrequisitos: [] },
+
+      { semestre: 5, nombre: "Construcción del pensamiento infantil: literacidad inicial 2", abrev: "EBA224", creditos: 3, prerrequisitos: ["EBA166"] },
+      { semestre: 5, nombre: "Construcción del pensamiento infantil: numeracidad y organización de datos", abrev: "EBA300", creditos: 3, prerrequisitos: [] },
+      { semestre: 5, nombre: "Construcción del pensamiento infantil: competencias ciudadanas", abrev: "EBA332", creditos: 2, prerrequisitos: [] },
+      { semestre: 5, nombre: "Experiencia pedagógica integrada 6", abrev: "EBA372", creditos: 2, prerrequisitos: [] },
+      { semestre: 5, nombre: "Construcción del pensamiento infantil: indagación científica 2", abrev: "EBA378", creditos: 2, prerrequisitos: [] },
+      { semestre: 5, nombre: "Tecnologías digitales para el aprendizaje", abrev: "EPE1132", creditos: 2, prerrequisitos: [] },
+      { semestre: 5, nombre: "Teoría y planificación curricular", abrev: "EPE1303", creditos: 3, prerrequisitos: [] },
+      { semestre: 5, nombre: "Inglés 2", abrev: "ING9002", creditos: 2, prerrequisitos: ["ING9001"] },
+
+      { semestre: 6, nombre: "Construcción del conocimiento científico infantil", abrev: "CMB393", creditos: 2, prerrequisitos: ["CBM121"] },
+      { semestre: 6, nombre: "Evaluación del y para el aprendizaje", abrev: "EPE1302", creditos: 3, prerrequisitos: ["EPE1303"] },
+      { semestre: 6, nombre: "Construcción del pensamiento histórico: historia universal e historia de Chile", abrev: "HIS218", creditos: 2, prerrequisitos: ["HIS1110"] },
+      { semestre: 6, nombre: "Construcción del conocimiento literario: literatura infantil y juvenil", abrev: "LCL119", creditos: 2, prerrequisitos: ["LCL118"] },
+      { semestre: 6, nombre: "Construcción del conocimiento matemático: álgebra", abrev: "MAT277", creditos: 2, prerrequisitos: ["MAT1191"] },
+      { semestre: 6, nombre: "Práctica docente intermedia", abrev: "PRA301-385", creditos: 6, prerrequisitos: ["PRA101-385", "EPE1303", "EBA220", "EBA385", "EBA229", "EBA222"] },
+
+      { semestre: 7, nombre: "Experiencia pedagógica integrada 7", abrev: "EBA446", creditos: 2, prerrequisitos: [] },
+      { semestre: 7, nombre: "Construcción del pensamiento infantil: lenguajes artísticos integrados", abrev: "EBA448", creditos: 4, prerrequisitos: [] },
+      { semestre: 7, nombre: "Identidad profesional docente", abrev: "EPE1130", creditos: 3, prerrequisitos: ["PRA301-385"] },
+      { semestre: 7, nombre: "Políticas públicas educativas y gestión escolar", abrev: "EPE1400", creditos: 2, prerrequisitos: [] },
+      { semestre: 7, nombre: "Inglés 3", abrev: "ING9003", creditos: 2, prerrequisitos: ["ING9002"] },
+
+      { semestre: 8, nombre: "Experiencia pedagógica integrada 8", abrev: "EBA489", creditos: 2, prerrequisitos: ["EPE1132"] },
+      { semestre: 8, nombre: "Inglés 4", abrev: "ING9004", creditos: 2, prerrequisitos: ["ING9003"] },
+      { semestre: 8, nombre: "Estrategias discursivas para comunicar y enseñar el conocimiento disciplinar", abrev: "LCL465", creditos: 2, prerrequisitos: [] },
+
+      { semestre: 9, nombre: "Trabajo de titulación", abrev: "EBA601", creditos: 6, prerrequisitos: ["LCL122", "EBA159", "EBA266", "EBA442", "EBA285", "EBA394", "EPE1320", "PSI311", "PSI275", "EPE1118", "EBA274", "EBA279", "EBA282", "EBA287", "EBA276", "EBA300", "EBA378", "EBA332", "EBA224", "EBA372", "EPE1302", "MAT277", "CMB393", "HIS218", "LCL119", "EPE1130", "EPE1400", "EBA448", "EBA446", "ING9004", "LCL465", "EBA489"] },
+      { semestre: 9, nombre: "Investigación educativa y pedagógica", abrev: "EPE1342", creditos: 3, prerrequisitos: ["PRA301-385", "EPE1130"] },
+
+      { semestre: 10, nombre: "Práctica docente final", abrev: "PRA601-358", creditos: 16, prerrequisitos: ["EBA601", "PRA301-385", "EPE1302", "EPE1342", "EPE1132"] },
+
+      // Optativas y formación fundamental (puedes agregar más luego)
+      { semestre: 10, nombre: "Optativa de profundización", abrev: "OPT101", creditos: 3, prerrequisitos: [], especial: 'optativa' },
+      { semestre: 10, nombre: "Formación fundamental: Ética y sociedad", abrev: "FFS100", creditos: 2, prerrequisitos: [], especial: 'formacion' },
+    ];
+
+    function crearMalla() {
+      const contenedor = document.getElementById('malla');
+      for (let i = 1; i <= 10; i++) {
+        const col = document.createElement('div');
+        col.className = 'semestre';
+        col.innerHTML = `<h2>Semestre ${i}</h2>`;
+        contenedor.appendChild(col);
+      }
+
+      ramos.forEach(ramo => {
+        const col = contenedor.children[ramo.semestre - 1];
+        const div = document.createElement('div');
+
+        const tienePrerreq = ramo.prerrequisitos.length > 0;
+        let clase = 'lila';
+        if (ramo.especial === 'optativa' || ramo.especial === 'formacion') {
+          clase = 'turquesa';
+        } else if (tienePrerreq) {
+          clase = 'verde';
+        }
+
+        div.className = `ramo ${clase}`;
+        div.innerHTML = `
+          <strong>${ramo.nombre}</strong><br>
+          <small>Abrev.: ${ramo.abrev} | Créditos: ${ramo.creditos}</small>
+        `;
+
+        div.onclick = () => {
+          if (div.classList.contains('morado')) {
+            div.classList.remove('morado');
+            div.classList.add(clase);
+          } else {
+            div.classList.remove('lila', 'verde', 'turquesa');
+            div.classList.add('morado');
+          }
+        };
+
+        col.appendChild(div);
+      });
+    }
+
+    crearMalla();
+  </script>
+</body>
+</html>
